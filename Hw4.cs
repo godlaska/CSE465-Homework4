@@ -34,10 +34,23 @@ public class Hw4
 
 
 
-        // Create an instance of FileReader and read the file
-        FileReader reader = new FileReader("zipcodes.txt");
+        // // Create an instance of FileReader and read the file
+        // FileReader reader = new FileReader("zipcodes.txt");
+        // List<ZipCodeData> zipCodes = reader.ReadFile();
+        // Initialize FileReader with the path to your test file
+        FileReader reader = new FileReader("test_zipcodes.txt");
+        
+        // Call ReadFile to parse data from the file
         List<ZipCodeData> zipCodes = reader.ReadFile();
         
+        // Output the total count of zip codes read to confirm data loading
+        Console.WriteLine($"Total records read: {zipCodes.Count}");
+
+        // Print each record to verify parsing
+        foreach (var zipCode in zipCodes)
+        {
+            Console.WriteLine(zipCode);
+        }
 
 
 
@@ -160,6 +173,16 @@ public class Hw4
       { 
           get; set; 
       }
+
+      public override string ToString()
+      {
+      return $"RecordNumber: {RecordNumber}, Zipcode: {Zipcode}, ZipCodeType: {ZipCodeType}, City: {City}, " +
+           $"State: {State}, LocationType: {LocationType}, Lat: {Lat}, Long: {Long}, Xaxis: {Xaxis}, " +
+           $"Yaxis: {Yaxis}, Zaxis: {Zaxis}, WorldRegion: {WorldRegion}, Country: {Country}, " +
+           $"LocationText: {LocationText}, Location: {Location}, Decommissioned: {Decommissioned}, " +
+           $"TaxReturnsFiled: {TaxReturnsFiled}, EstimatedPopulation: {EstimatedPopulation}, " +
+           $"TotalWages: {TotalWages}, Notes: {Notes}";
+    }
   }
 
   public class FileReader 
@@ -188,7 +211,35 @@ public class Hw4
           string line;
           while ((line = reader.ReadLine()) != null)
           {
-              Console.WriteLine(line);
+              // Each field is separated by a tab
+              string[] fields = line.Split('\t');
+              
+              var zipCodeData = new ZipCodeData
+              {
+                RecordNumber = fields.Length > 0 && int.TryParse(fields[0], out int recordNumber) ? recordNumber : 0,
+                Zipcode = fields.Length > 1 ? fields[1] : "",
+                ZipCodeType = fields.Length > 2 ? fields[2] : "",
+                City = fields.Length > 3 ? fields[3] : "",
+                State = fields.Length > 4 ? fields[4] : "",
+                LocationType = fields.Length > 5 ? fields[5] : "",
+                Lat = fields.Length > 6 && double.TryParse(fields[6], out double lat) ? lat : 0.0,
+                Long = fields.Length > 7 && double.TryParse(fields[7], out double lng) ? lng : 0.0,
+                Xaxis = fields.Length > 8 ? fields[8] : "",
+                Yaxis = fields.Length > 9 ? fields[9] : "",
+                Zaxis = fields.Length > 10 ? fields[10] : "",
+                WorldRegion = fields.Length > 11 ? fields[11] : "",
+                Country = fields.Length > 12 ? fields[12] : "",
+                LocationText = fields.Length > 13 ? fields[13] : "",
+                Location = fields.Length > 14 ? fields[14] : "",
+                Decommissioned = fields.Length > 15 && bool.TryParse(fields[15], out bool decommissioned) ? decommissioned : false,
+                TaxReturnsFiled = fields.Length > 16 && int.TryParse(fields[16], out int taxReturnsFiled) ? taxReturnsFiled : 0,
+                EstimatedPopulation = fields.Length > 17 && int.TryParse(fields[17], out int estimatedPopulation) ? estimatedPopulation : 0,
+                TotalWages = fields.Length > 18 && int.TryParse(fields[18], out int totalWages) ? totalWages : 0,
+                Notes = fields.Length > 19 ? fields[19] : ""
+              };
+
+              // Add parsed line to the zipCodes list
+              zipCodes.Add(zipCodeData);
           }
         }
       }
@@ -202,6 +253,28 @@ public class Hw4
     }  // End ReadFile
 
   }  // End FileReader
+
+  public class TestFileReader
+{
+    public static void TestReadFile()
+    {
+        // Initialize a FileReader with the test file path
+        FileReader reader = new FileReader("test_zipcodes.txt");
+        
+        // Read the data from the test file
+        List<ZipCodeData> zipCodes = reader.ReadFile();
+        
+        // Check if data was read by printing the count
+        Console.WriteLine($"Total records read: {zipCodes.Count}");
+
+        // Print each record to verify parsing
+        foreach (var zipCode in zipCodes)
+        {
+            Console.WriteLine(zipCode);
+        }
+    }
+}
+
 
 }  // End Hw4
 
