@@ -175,9 +175,34 @@ public class Hw4
     // ZipCodeData to streamline reading the list after parsing each line
     public List<ZipCodeData> ReadFile()
     {
+      var zipCodes = new List<ZipCodeData>();
 
-    }
-  }
-}
+      // StreamReader documentation found at https://learn.microsoft.com/en-us/dotnet/api/system.io.streamreader?view=net-8.0
+      try 
+      {
+        using (StreamReader reader = new StreamReader(filePath))
+        {
+          // Skips header line
+          reader.ReadLine();
+
+          string line;
+          while ((line = reader.ReadLine()) != null)
+          {
+              Console.WriteLine(line);
+          }
+        }
+      }
+      catch (Exception e)
+      {
+        Console.WriteLine("The file could not be read:");
+        Console.WriteLine(e.Message);
+      }
+
+      return zipCodes;
+    }  // End ReadFile
+
+  }  // End FileReader
+
+}  // End Hw4
 
 
