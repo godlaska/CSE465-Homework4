@@ -164,7 +164,7 @@ public class Hw4
           {
                 var states = cityStates[normalizedCity];
 
-                cityStateOutput.Add($"{string.Join(", ", states)}");
+                cityStateOutput.Add($"{string.Join(" ", states)}");
           }
           else
           {
