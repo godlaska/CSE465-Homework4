@@ -17,6 +17,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 public class Hw4
 {
@@ -34,24 +35,66 @@ public class Hw4
 
 
 
-        // // Create an instance of FileReader and read the file
-        // FileReader reader = new FileReader("zipcodes.txt");
-        // List<ZipCodeData> zipCodes = reader.ReadFile();
-        // Initialize FileReader with the path to your test file
-        FileReader reader = new FileReader("test_zipcodes.txt");
-        
-        // Call ReadFile to parse data from the file
+        // Create an instance of FileReader and read the file
+        FileReader reader = new FileReader("zipcodes.txt");
+        // Parses all the zipcode data and stores it in a List
         List<ZipCodeData> zipCodes = reader.ReadFile();
-        
-        // Output the total count of zip codes read to confirm data loading
-        Console.WriteLine($"Total records read: {zipCodes.Count}");
 
-        // Print each record to verify parsing
+        //----------------- CommonCityNames.txt -----------------
+
+        // Set up a dictionary to store the cities for each state
+        Dictionary<string, HashSet<string>> stateCities = new Dictionary<string, HashSet<string>>();
+
+        // Creates a dictionary of all states and their cities, without
+        // any duplicates
         foreach (var zipCode in zipCodes)
         {
-            Console.WriteLine(zipCode);
+            if (!stateCities.ContainsKey(zipCode.State))
+            {
+              // Adds state if it isn't already in the dictionary
+              stateCities[zipCode.State] = new HashSet<string>();
+            }
+            stateCities[zipCode.State].Add(zipCode.City);
         }
 
+        // Reads states.txt and creates a HashSet of just
+        // those specified states
+        var lines = File.ReadAllLines("states.txt");
+        HashSet<string> targetStates = new HashSet<string>(lines);
+
+        // SortedSet is used so there's no duplicate cities stored, and
+        // the list is automatically sorted. targetStates.First() gets
+        // the first state in states.txt
+        SortedSet<string> commonCities = new SortedSet<string>(stateCities[targetStates.First()]);
+
+        // Finds the intersection between the first state and every other state
+        // provided in the text file
+        foreach (var state in targetStates.Skip(1))
+        {
+            if (stateCities.ContainsKey(state))
+            {
+                // Adds the cities that are common in both states
+                commonCities.IntersectWith(stateCities[state]);
+            }
+            else
+            {
+                // If any state has no cities, the intersection is empty
+                commonCities.Clear();
+                break;
+            }
+        }
+
+        // Creates or overwrites the output file
+        File.WriteAllText("CommonCityNames.txt", string.Join(Environment.NewLine, commonCities));
+
+        // ----------------- LatLon.txt -----------------
+
+
+
+
+
+
+        // ----------------- CityStates.txt -----------------
 
 
         
@@ -214,6 +257,8 @@ public class Hw4
               // Each field is separated by a tab
               string[] fields = line.Split('\t');
               
+              // Field parsing logic with assistance of ChatGPT
+              // TryParse implementation provided by https://www.educative.io/answers/what-is-parse-and-tryparse-in-c-sharp-10
               var zipCodeData = new ZipCodeData
               {
                 RecordNumber = fields.Length > 0 && int.TryParse(fields[0], out int recordNumber) ? recordNumber : 0,
@@ -254,28 +299,4 @@ public class Hw4
 
   }  // End FileReader
 
-  public class TestFileReader
-{
-    public static void TestReadFile()
-    {
-        // Initialize a FileReader with the test file path
-        FileReader reader = new FileReader("test_zipcodes.txt");
-        
-        // Read the data from the test file
-        List<ZipCodeData> zipCodes = reader.ReadFile();
-        
-        // Check if data was read by printing the count
-        Console.WriteLine($"Total records read: {zipCodes.Count}");
-
-        // Print each record to verify parsing
-        foreach (var zipCode in zipCodes)
-        {
-            Console.WriteLine(zipCode);
-        }
-    }
-}
-
-
 }  // End Hw4
-
-
