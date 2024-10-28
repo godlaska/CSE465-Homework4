@@ -128,8 +128,58 @@ public class Hw4
 
         // ================================= CityStates.txt =================================
 
+        // Set up a dictionary to store the states for each city
+        Dictionary<string, HashSet<string>> cityStates = new Dictionary<string, HashSet<string>>();
 
+        // Creates a dictionary of all cities and their states, without
+        // any duplicates
+        foreach (var zipCode in zipCodes)
+        {
+            if (!cityStates.ContainsKey(zipCode.City))
+            {
+              // Adds state if it isn't already in the dictionary
+              cityStates[zipCode.City] = new HashSet<string>();
+            }
+            cityStates[zipCode.City].Add(zipCode.State);
+        }
+
+        // Reads cities.txt and creates a HashSet of just
+        // those specified states
+        var citiesToCheck = File.ReadAllLines("cities.txt");
+
+        // Stores the output
+        List<string> cityStateOutput = new List<string>();
+
+        // Debug: Print out the contents of citiesToCheck
+Console.WriteLine("Cities to Check:");
+foreach (var city in citiesToCheck)
+{
+    Console.WriteLine($"- {city.Trim()}"); // Trim to remove any leading/trailing spaces
+}
+
+        // Iterate over the cities from cities.txt
+        foreach (var city in citiesToCheck)
+        {
+          if (cityStates.ContainsKey(city)) 
+          {
+                var states = cityStates[city];
+
+                cityStateOutput.Add($"{string.Join(", ", states)}");
+          }
+          else
+          {
+            // Case if a city doesn't exist
+            cityStateOutput.Add($"{city}: Not Found");
+          }
+        }
         
+
+        // Creates or overwrites the output file with all states containing the city
+        File.WriteAllText("CityStates.txt", string.Join(Environment.NewLine, cityStateOutput));
+
+
+
+
 
         // ============================
         // Do not add or change anything below, inside the 
@@ -249,6 +299,8 @@ public class Hw4
           get; set; 
       }
 
+    // Not explicitly needed for this homework, but was useful in
+    // testing if the file was being parsed correctly
       public override string ToString()
       {
       return $"RecordNumber: {RecordNumber}, Zipcode: {Zipcode}, ZipCodeType: {ZipCodeType}, City: {City}, " +
