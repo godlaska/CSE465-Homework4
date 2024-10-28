@@ -10,8 +10,7 @@
   will use the hw4 class to execute and evaluate your work.
   */
   // BONUS POINT:
-  // => Used Pointers from lines 10 to 15 <=
-  // => Used Pointers from lines 40 to 63 <=
+  // N/A
   
 
 using System;
@@ -162,9 +161,10 @@ public class Hw4
 
           if (cityStates.ContainsKey(normalizedCity)) 
           {
-                var states = cityStates[normalizedCity];
+            // Sort the states before joining them into a string
+            var states = cityStates[normalizedCity].OrderBy(s => s);
 
-                cityStateOutput.Add($"{string.Join(" ", states)}");
+            cityStateOutput.Add($"{string.Join(" ", states)}");
           }
           else
           {
@@ -172,7 +172,6 @@ public class Hw4
             cityStateOutput.Add($"{city}: Not Found");
           }
         }
-        
 
         // Creates or overwrites the output file with all states containing the city
         File.WriteAllText("CityStates.txt", string.Join(Environment.NewLine, cityStateOutput));
