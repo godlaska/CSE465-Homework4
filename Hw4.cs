@@ -40,7 +40,10 @@ public class Hw4
         // Parses all the zipcode data and stores it in a List
         List<ZipCodeData> zipCodes = reader.ReadFile();
 
-        //----------------- CommonCityNames.txt -----------------
+
+
+
+        // ================================= CommonCityNames.txt =================================
 
         // Set up a dictionary to store the cities for each state
         Dictionary<string, HashSet<string>> stateCities = new Dictionary<string, HashSet<string>>();
@@ -84,17 +87,46 @@ public class Hw4
             }
         }
 
-        // Creates or overwrites the output file
+        // Creates or overwrites the output file with all common cities
         File.WriteAllText("CommonCityNames.txt", string.Join(Environment.NewLine, commonCities));
 
-        // ----------------- LatLon.txt -----------------
 
 
+        // ================================= LatLon.txt =================================
 
+        var targetZipCodes = new HashSet<string>(File.ReadAllLines("zips.txt"));
+        var zipCodeCoordinates = new Dictionary<string, (double Lat, double Lon)>();
 
+        // Add the first lat/lon for each specified zip code
+        foreach (var zipCode in zipCodes)
+        {
+            // Checks if the targeted zipcode has already been put in the dictionary
+            if (targetZipCodes.Contains(zipCode.Zipcode) && !zipCodeCoordinates.ContainsKey(zipCode.Zipcode))
+            {
+                zipCodeCoordinates[zipCode.Zipcode] = (zipCode.Lat, zipCode.Long);
+            }
+        }
 
+        // Write to LatLon.txt
+        using (StreamWriter writer = new StreamWriter("LatLon.txt"))
+        {
+          foreach(var zipCode in targetZipCodes)
+          {
+              // Check if the zip code exists in zipCodeCoordinates
+              if (zipCodeCoordinates.ContainsKey(zipCode))
+              {
+                  // Gets the coordinates from the dictionary
+                  var coordinates = zipCodeCoordinates[zipCode];
+                  writer.WriteLine($"{coordinates.Lat} {coordinates.Lon}");
+              }
+              else
+              {
+                  writer.WriteLine($"{zipCode} Not Found");
+              }
+          }
+        }
 
-        // ----------------- CityStates.txt -----------------
+        // ================================= CityStates.txt =================================
 
 
         
