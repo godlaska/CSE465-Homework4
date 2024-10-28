@@ -126,6 +126,8 @@ public class Hw4
           }
         }
 
+
+
         // ================================= CityStates.txt =================================
 
         // Set up a dictionary to store the states for each city
@@ -150,19 +152,17 @@ public class Hw4
         // Stores the output
         List<string> cityStateOutput = new List<string>();
 
-        // Debug: Print out the contents of citiesToCheck
-Console.WriteLine("Cities to Check:");
-foreach (var city in citiesToCheck)
-{
-    Console.WriteLine($"- {city.Trim()}"); // Trim to remove any leading/trailing spaces
-}
-
         // Iterate over the cities from cities.txt
         foreach (var city in citiesToCheck)
         {
-          if (cityStates.ContainsKey(city)) 
+          // cities.text might be formatted like 'Oxford' instead
+          // of 'OXFORD' like in zipcodes.txt, so we format
+          // the city name first
+          var normalizedCity = city.ToUpper();
+
+          if (cityStates.ContainsKey(normalizedCity)) 
           {
-                var states = cityStates[city];
+                var states = cityStates[normalizedCity];
 
                 cityStateOutput.Add($"{string.Join(", ", states)}");
           }
